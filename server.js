@@ -1,7 +1,6 @@
 // Fix for ISPs that don't support DNS SRV records (needed for mongodb+srv://)
 const dns   = require('dns');
 const https = require('https');
-const qs    = require('querystring');
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 require('dotenv').config();
@@ -130,17 +129,23 @@ async function nextQueueNumber() {
   return doc.seq;
 }
 
-// ── LINE Notify ──────────────────────────────────────────────────────────────
-function sendLineNotify(message) {
-  const token = process.env.LINE_NOTIFY_TOKEN;
-  if (!token || token === 'your_token_here') return;
-  const body = qs.stringify({ message });
+// ── Telegram Bot Notify ───────────────────────────────────────────────────────
+function sendTelegramNotify(message) {
+  const token  = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId || token === 'your_bot_token' || chatId === 'your_chat_id') return;
+
+  const body = JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML' });
   const opts = {
-    hostname: 'notify-api.line.me', path: '/api/notify', method: 'POST',
-    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(body) }
+    hostname: 'api.telegram.org',
+    path:     `/bot${token}/sendMessage`,
+    method:   'POST',
+    headers:  { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
   };
-  const req = https.request(opts, r => { if (r.statusCode !== 200) console.warn('[LINE] status', r.statusCode); });
-  req.on('error', e => console.warn('[LINE] error', e.message));
+  const req = https.request(opts, r => {
+    if (r.statusCode !== 200) console.warn('[Telegram] status', r.statusCode);
+  });
+  req.on('error', e => console.warn('[Telegram] error', e.message));
   req.write(body); req.end();
 }
 
@@ -249,8 +254,14 @@ app.post('/api/queue', queueCreateLimiter, async (req, res) => {
     const queue = await Queue.create({ queueNumber, name, phone, problemType, date, description });
 
     io.to('admin_room').emit('new_queue', queueToJSON(queue));
-    // LINE Notify
-    sendLineNotify(`\n🔔 คิวใหม่! #${queueNumber}\n👤 ${name}\n📞 ${phone}\n🔧 ${problemType}${description ? '\n📝 ' + description.slice(0, 80) : ''}`);
+    // Telegram notify
+    sendTelegramNotify(
+      `🔔 <b>คิวใหม่! #${queueNumber}</b>\n` +
+      `👤 ${name}\n` +
+      `📞 ${phone}\n` +
+      `🔧 ${problemType}` +
+      (description ? `\n📝 ${description.slice(0, 100)}` : '')
+    );
     res.json({ success: true, queue: queueToJSON(queue) });
   } catch (err) {
     console.error('[queue create]', err.message);
