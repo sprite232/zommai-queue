@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>แชทสอบถาม | ซ่อมมั้ย</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/chat.css"/>
+</head>
+<body>
+
+<!-- ENTRY SCREEN -->
+<div class="entry-screen" id="entryScreen">
+  <div class="entry-card">
+    <div class="entry-logo">🔧</div>
+    <h1>ซ่อมมั้ย — แชทสอบถาม</h1>
+    <p>สอบถามได้ตลอด ส่งรูปได้ ช่างตอบไว</p>
+
+    <div class="entry-tabs">
+      <button class="entry-tab active" id="tabQueueId" onclick="switchTab('queueId')">มี Queue ID</button>
+      <button class="entry-tab" id="tabNewChat" onclick="switchTab('newChat')">แชทใหม่ (ไม่มี ID)</button>
+    </div>
+
+    <!-- Tab: Queue ID -->
+    <div id="formQueueId">
+      <div class="entry-form">
+        <input class="entry-input" id="inputQueueId" type="text" placeholder="Queue ID (ตัวเลข เช่น 1, 2, 3)" autocomplete="off"/>
+        <input class="entry-input" id="inputQueueName" type="text" placeholder="ชื่อของคุณ"/>
+        <button class="entry-btn" id="btnEnterQueue" onclick="enterByQueueId()">เข้าสู่ห้องแชท →</button>
+        <div class="entry-error" id="errQueueId"></div>
+      </div>
+    </div>
+
+    <!-- Tab: New Chat -->
+    <div id="formNewChat" style="display:none">
+      <div class="entry-form">
+        <input class="entry-input" id="inputGuestName" type="text" placeholder="ชื่อของคุณ *"/>
+        <input class="entry-input" id="inputGuestPhone" type="tel" placeholder="เบอร์โทรศัพท์ *"/>
+        <textarea class="entry-input" id="inputGuestMsg" rows="3" placeholder="อธิบายปัญหาเบื้องต้น..." style="resize:none;"></textarea>
+        <button class="entry-btn" id="btnNewChat" onclick="startNewChat()">เริ่มแชทเลย →</button>
+        <div class="entry-error" id="errNewChat"></div>
+      </div>
+    </div>
+
+    <button class="entry-back" onclick="window.location='index.html'">← กลับหน้าหลัก</button>
+  </div>
+</div>
+
+<!-- CHAT SCREEN -->
+<div class="chat-screen" id="chatScreen">
+  <!-- Header -->
+  <div class="chat-header">
+    <button class="chat-header-back" onclick="goBack()" title="กลับ">←</button>
+    <div class="chat-avatar">🔧</div>
+    <div class="chat-header-info">
+      <div class="chat-header-name">ช่างซ่อมมั้ย</div>
+      <div class="chat-header-status">
+        <span class="status-dot" id="adminDot"></span>
+        <span id="adminStatusText">กำลังโหลด...</span>
+      </div>
+    </div>
+    <div style="margin-left:auto;font-size:.82rem;color:#64748b">คิว #<span id="headerQNum">—</span></div>
+  </div>
+
+  <!-- Queue status bar -->
+  <div class="queue-status-bar" id="queueStatusBar">
+    <span class="q-label">ชื่อ:</span> <span class="q-val" id="qBarName">—</span>
+    <span class="q-label" style="margin-left:16px">ปัญหา:</span> <span class="q-val" id="qBarType">—</span>
+    <span class="q-status-badge" id="qBarStatus">รอ</span>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-messages" id="chatMessages">
+    <div class="empty-chat" id="emptyChat">
+      <div class="icon">💬</div>
+      <div>ยังไม่มีข้อความ<br/>ส่งข้อความหาช่างได้เลย!</div>
+    </div>
+    <div class="typing-indicator" id="typingIndicator">
+      <div class="msg-avatar">🔧</div>
+      <div class="msg-bubble">
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image preview before send -->
+  <div class="img-preview-bar" id="imgPreviewBar">
+    <img id="imgPreviewThumb" src="" alt="preview"/>
+    <span id="imgPreviewName" style="font-size:.83rem;color:#64748b;flex:1"></span>
+    <button onclick="clearImgPreview()">✕</button>
+  </div>
+
+  <!-- Input area -->
+  <div class="chat-input-area">
+    <button class="chat-img-btn" id="imgPickBtn" title="ส่งรูปภาพ" onclick="document.getElementById('imgFileInput').click()">📷</button>
+    <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="previewImg(this)"/>
+    <div class="chat-input-wrap">
+      <textarea class="chat-textarea" id="chatTextarea" rows="1" placeholder="พิมพ์ข้อความ..." oninput="autoResize(this)" onkeydown="handleEnter(event)"></textarea>
+    </div>
+    <button class="chat-send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<!-- Image Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt=""/>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/chat.js"></script>
+</body>
+</html>

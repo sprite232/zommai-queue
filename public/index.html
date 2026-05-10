@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="ซ่อมมั้ย — จองคิวซ่อมโน้ตบุ๊กออนไลน์ บริการถึงบ้าน ต.ผาอินทร์แปลง"/>
+  <title>ซ่อมมั้ย | จองคิวซ่อมโน้ตบุ๊ก</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="#" class="nav-logo">
+      <span class="logo-icon">🔧</span>
+      <span class="logo-text">ซ่อมมั้ย</span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="เมนู">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#services" class="nav-link">บริการ</a></li>
+      <li><a href="#pricing"  class="nav-link">ราคา</a></li>
+      <li><a href="#booking"  class="nav-link">จองคิว</a></li>
+      <li><a href="#contact"  class="nav-link">ติดต่อ</a></li>
+      <li><a href="chat.html" class="nav-cta" id="chatNavBtn">💬 แชทสอบถาม</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+  </div>
+  <div class="hero-container">
+    <div class="hero-content">
+      <div class="hero-badge">🏠 บริการถึงหน้าบ้าน ต.ผาอินทร์แปลง</div>
+      <h1 class="hero-title">
+        ซ่อมโน้ตบุ๊ก<br/>
+        <span class="accent">ครบ จบ ที่เดียว</span>
+      </h1>
+      <p class="hero-desc">
+        เช็กอาการ · อัปเกรด · ซ่อมทุกปัญหา<br/>
+        ฟรีตรวจเช็ก ราคาเริ่มต้น <strong>150 บาท</strong> บริการถึงบ้าน
+      </p>
+      <div class="hero-actions">
+        <a href="#booking" class="btn btn-primary" id="heroBookBtn">📋 จองคิวเลย</a>
+        <a href="chat.html" class="btn btn-outline" id="heroChatBtn">💬 สอบถามก่อน</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="num">ฟรี</span><span class="lbl">ตรวจเช็ก</span></div>
+        <div class="hero-stat"><span class="num">150฿</span><span class="lbl">เริ่มต้น</span></div>
+        <div class="hero-stat"><span class="num">ถึงบ้าน</span><span class="lbl">บริการ</span></div>
+      </div>
+    </div>
+    <!-- Visual Card -->
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="hero-card-title">📋 คิวล่าสุด</div>
+        <div class="queue-preview">
+          <div class="queue-item-preview">
+            <div class="q-num">#1</div>
+            <div class="q-info"><div class="q-name">คุณสมชาย</div><div class="q-type">เปลี่ยน SSD</div></div>
+            <div class="q-status-dot dot-green"></div>
+          </div>
+          <div class="queue-item-preview">
+            <div class="q-num">#2</div>
+            <div class="q-info"><div class="q-name">คุณมาลี</div><div class="q-type">ลง Windows</div></div>
+            <div class="q-status-dot dot-blue"></div>
+          </div>
+          <div class="queue-item-preview">
+            <div class="q-num">#3</div>
+            <div class="q-info"><div class="q-name">คุณสมหมาย</div><div class="q-type">ล้างเครื่อง</div></div>
+            <div class="q-status-dot dot-gray"></div>
+          </div>
+        </div>
+        <div class="float-badge float-badge-1">
+          <div class="dot" style="background:var(--success)"></div> แอดมินออนไลน์
+        </div>
+        <div class="float-badge float-badge-2">⚡ ตอบไว ใน 5 นาที</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">บริการของเรา</span>
+      <h2 class="section-title">ซ่อมได้ทุกปัญหา</h2>
+      <p class="section-desc">บริการครบวงจรสำหรับโน้ตบุ๊กทุกยี่ห้อ</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card" id="svcDiag">
+        <div class="svc-icon">🔍</div>
+        <h3>ตรวจเช็กอาการ</h3>
+        <p>วินิจฉัยปัญหาเครื่องออนไลน์และหน้างาน ไม่มีค่าใช้จ่าย</p>
+        <span class="svc-tag free">ฟรี!</span>
+      </div>
+      <div class="service-card" id="svcSSD">
+        <div class="svc-icon">💾</div>
+        <h3>เปลี่ยน SSD / RAM</h3>
+        <p>อัปเกรดให้เครื่องเร็วขึ้นหลายเท่า พร้อมย้ายข้อมูลครบถ้วน</p>
+        <span class="svc-tag default">อัปเกรด</span>
+      </div>
+      <div class="service-card" id="svcWin">
+        <div class="svc-icon">🪟</div>
+        <h3>ลง Windows</h3>
+        <p>ติดตั้ง Windows ใหม่ ลง Driver ครบ พร้อมโปรแกรมพื้นฐาน</p>
+        <span class="svc-tag default">ซอฟต์แวร์</span>
+      </div>
+      <div class="service-card" id="svcClean">
+        <div class="svc-icon">✨</div>
+        <h3>ทำความสะอาด</h3>
+        <p>ล้างฝุ่น เปลี่ยนซิลิโคน ทำให้เครื่องเย็นลง ยืดอายุการใช้งาน</p>
+        <span class="svc-tag default">บำรุงรักษา</span>
+      </div>
+      <div class="service-card" id="svcProg">
+        <div class="svc-icon">📦</div>
+        <h3>ติดตั้งโปรแกรม</h3>
+        <p>ติดตั้งโปรแกรมเพิ่มเติมตามต้องการ ราคาตามตกลง</p>
+        <span class="svc-tag paid">มีค่าใช้จ่าย</span>
+      </div>
+      <div class="service-card featured" id="svcHome">
+        <div class="svc-icon">🏠</div>
+        <h3>บริการถึงบ้าน</h3>
+        <p>รับ-ส่งถึงหน้าบ้านใน ต.ผาอินทร์แปลง สะดวก ไม่ต้องเดินทาง</p>
+        <span class="svc-tag main">พิเศษ</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">ราคา</span>
+      <h2 class="section-title">โปร่งใส ไม่มีค่าใช้จ่ายซ่อน</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card" id="priceCheck">
+        <div style="font-size:2rem;margin-bottom:12px">🔍</div>
+        <h3>ตรวจเช็กเบื้องต้น</h3>
+        <div class="price-amount free">ฟรี!</div>
+        <ul class="price-list">
+          <li>เช็กอาการออนไลน์</li>
+          <li>วินิจฉัยเบื้องต้น</li>
+          <li>แนะนำการแก้ปัญหา</li>
+        </ul>
+        <a href="chat.html" class="btn btn-outline btn-sm">สอบถาม</a>
+      </div>
+      <div class="price-card featured" id="priceRepair">
+        <div style="font-size:2rem;margin-bottom:12px">🔧</div>
+        <h3>ซ่อมทั่วไป</h3>
+        <div class="price-amount">เริ่มต้น 150฿</div>
+        <p class="price-note">*ไม่รวมค่าอะไหล่</p>
+        <ul class="price-list">
+          <li>ซ่อมซอฟต์แวร์</li>
+          <li>ลง Windows</li>
+          <li>ทำความสะอาด</li>
+          <li>ตรวจเช็กฟรีก่อนซ่อม</li>
+        </ul>
+        <a href="#booking" class="btn btn-primary btn-sm" id="priceBookBtn" style="background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);color:#fff">จองคิว →</a>
+      </div>
+      <div class="price-card" id="priceUpgrade">
+        <div style="font-size:2rem;margin-bottom:12px">💾</div>
+        <h3>อัปเกรด SSD</h3>
+        <div class="price-amount" style="font-size:1.3rem">ราคาตามจริง</div>
+        <ul class="price-list">
+          <li>เปลี่ยน SSD / HDD</li>
+          <li>ย้ายข้อมูล</li>
+          <li>ติดตั้ง OS ใหม่</li>
+          <li>รับประกันงาน</li>
+        </ul>
+        <a href="#booking" class="btn btn-outline btn-sm">จองคิว</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUEUE BOOKING -->
+<section class="queue-section" id="booking">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">จองคิว</span>
+      <h2 class="section-title">จองคิวออนไลน์</h2>
+      <p class="section-desc">กรอกข้อมูล รอรับ Queue ID เเล้วติดตามสถานะได้เลย</p>
+    </div>
+    <div class="booking-wrap">
+      <!-- Info -->
+      <div class="booking-info">
+        <h3>วิธีใช้งาน</h3>
+        <p>จองคิวง่ายๆ ไม่ต้องโทร ระบุปัญหา แนบรูป เสร็จแล้วรอเราติดต่อกลับ!</p>
+        <div class="booking-steps">
+          <div class="b-step">
+            <div class="b-step-num">1</div>
+            <div class="b-step-text"><div class="t">กรอกข้อมูล</div><div class="s">ชื่อ เบอร์ ประเภทปัญหา</div></div>
+          </div>
+          <div class="b-step">
+            <div class="b-step-num">2</div>
+            <div class="b-step-text"><div class="t">รับ Queue ID</div><div class="s">ID สำหรับติดตามคิวของคุณ</div></div>
+          </div>
+          <div class="b-step">
+            <div class="b-step-num">3</div>
+            <div class="b-step-text"><div class="t">แชทกับช่าง</div><div class="s">ส่งรูป สอบถาม อัปเดตสถานะ</div></div>
+          </div>
+          <div class="b-step">
+            <div class="b-step-num">4</div>
+            <div class="b-step-text"><div class="t">รับเครื่องคืน</div><div class="s">บริการถึงบ้าน ต.ผาอินทร์แปลง</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- Form -->
+      <div class="booking-form-card">
+        <h3>📋 กรอกข้อมูลจองคิว</h3>
+        <form id="bookingForm" novalidate>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="bName">ชื่อ-นามสกุล<span>*</span></label>
+              <input class="form-input" id="bName" type="text" placeholder="คุณสมชาย ใจดี" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bPhone">เบอร์โทรศัพท์<span>*</span></label>
+              <input class="form-input" id="bPhone" type="tel" placeholder="08x-xxx-xxxx" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bType">ประเภทปัญหา<span>*</span></label>
+              <select class="form-select" id="bType" required>
+                <option value="">-- เลือกประเภท --</option>
+                <option>เครื่องช้า / ค้าง</option>
+                <option>เปลี่ยน SSD / RAM</option>
+                <option>ลง Windows</option>
+                <option>ทำความสะอาด</option>
+                <option>จอมีปัญหา</option>
+                <option>แบตเตอรี่เสีย</option>
+                <option>แป้นพิมพ์เสีย</option>
+                <option>อื่นๆ</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bDate">วันที่ต้องการ</label>
+              <input class="form-input" id="bDate" type="date"/>
+            </div>
+            <div class="form-group full">
+              <label class="form-label" for="bDesc">รายละเอียดเพิ่มเติม</label>
+              <textarea class="form-textarea" id="bDesc" placeholder="อธิบายอาการของเครื่อง เช่น เปิดเครื่องติดแต่ช้ามาก ใช้งานมา 3 ปีแล้ว..."></textarea>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">รูปภาพประกอบ (ถ้ามี)</label>
+              <div class="upload-area" id="uploadArea">
+                <input type="file" id="imgInput" accept="image/*" multiple/>
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">
+                  <strong>คลิกหรือลากรูปมาวางที่นี่</strong><br/>
+                  รองรับ JPG, PNG, GIF สูงสุด 10MB ต่อรูป
+                </div>
+              </div>
+              <div class="upload-previews" id="uploadPreviews"></div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="submitBooking" style="width:100%;margin-top:20px;padding:14px">
+            📋 จองคิวเลย
+          </button>
+          <div id="bookingError" style="color:var(--danger);font-size:.85rem;margin-top:10px;text-align:center;display:none"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">ติดต่อ</span>
+      <h2 class="section-title">มาคุยกันเลย!</h2>
+      <p class="section-desc">สอบถามฟรี พร้อมบริการทุกวัน</p>
+    </div>
+    <div class="contact-grid">
+      <a href="tel:096-967-9951" class="contact-card phone" id="contactPhone">
+        <div class="contact-icon">📞</div>
+        <h3>โทรศัพท์</h3>
+        <div class="contact-value">096-967-9951</div>
+        <span class="contact-cta">กดโทรเลย →</span>
+      </a>
+      <a href="chat.html" class="contact-card" id="contactChat" style="border-color:var(--blue-600)">
+        <div class="contact-icon">💬</div>
+        <h3>แชทออนไลน์</h3>
+        <div class="contact-value" style="font-size:1rem">สอบถามตลอด 24/7</div>
+        <span class="btn btn-primary btn-sm" style="margin-top:8px">เข้าแชทเลย →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-logo">🔧 ซ่อมมั้ย</div>
+    <p>รับซ่อมโน้ตบุ๊ก • เช็กอาการ • อัปเกรดเครื่อง</p>
+    <p>📞 096-967-9951</p>
+    <p class="footer-copy">© 2025 ซ่อมมั้ย · บริการถึงหน้าบ้าน ต.ผาอินทร์แปลง</p>
+  </div>
+</footer>
+
+<!-- Float Chat -->
+<a href="chat.html" class="float-chat" id="floatChatBtn">
+  <span class="chat-notif"></span> 💬 แชทสอบถาม
+</a>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal-box">
+    <div class="modal-icon">🎉</div>
+    <h2>จองคิวสำเร็จ!</h2>
+    <p>บันทึกข้อมูลเรียบร้อย เราจะติดต่อกลับเร็วๆ นี้</p>
+    <div class="queue-id-box">
+      <div class="queue-id-label">Queue ID ของคุณ</div>
+      <div class="queue-id-val" id="modalQueueId">—</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" id="modalClose">ปิด</button>
+      <button class="btn btn-primary btn-sm" id="modalChat">💬 ไปแชทกับช่าง</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ซ่อมมั้ย - รับซ่อมโน้ตบุ๊ก เช็กอาการ อัปเกรดเครื่อง บริการถึงหน้าบ้าน ต.ผาอินทร์แปลง โทร 096-967-9951" />
+  <title>ซ่อมมั้ย | รับซ่อมโน้ตบุ๊กถึงหน้าบ้าน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">🔧</span>
+        <span class="logo-text">ซ่อมมั้ย</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="เมนู">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#services" class="nav-link">บริการ</a></li>
+        <li><a href="#pricing" class="nav-link">ราคา</a></li>
+        <li><a href="#area" class="nav-link">พื้นที่</a></li>
+        <li><a href="#contact" class="nav-link">ติดต่อ</a></li>
+        <li><a href="tel:096-967-9951" class="nav-cta">📞 โทรเลย</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg">
+      <div class="grid-overlay"></div>
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+    </div>
+    <div class="hero-container">
+      <div class="hero-badge">🏠 บริการถึงหน้าบ้าน</div>
+      <h1 class="hero-title">
+        <span class="hero-highlight">ซ่อมมั้ย</span><br/>
+        รับซ่อมโน้ตบุ๊ก<br/>
+        <span class="hero-sub">ครบ จบ ที่เดียว</span>
+      </h1>
+      <p class="hero-desc">
+        เช็กอาการ • อัปเกรด • ซ่อมทุกปัญหา<br/>
+        ฟรีตรวจเช็ก · ราคาเริ่มต้น <strong>150 บาท</strong>
+      </p>
+      <div class="hero-actions">
+        <a href="tel:096-967-9951" class="btn btn-primary" id="heroCallBtn">
+          📞 โทรหาเราเลย
+        </a>
+        <a href="#services" class="btn btn-outline" id="heroServicesBtn">
+          ดูบริการทั้งหมด
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">ฟรี</span>
+          <span class="stat-label">ตรวจเช็ก</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">150฿</span>
+          <span class="stat-label">เริ่มต้น</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">ถึงบ้าน</span>
+          <span class="stat-label">บริการ</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-indicator"></div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">บริการของเรา</span>
+        <h2 class="section-title">ซ่อมได้ทุกปัญหา</h2>
+        <p class="section-desc">บริการครบวงจรสำหรับโน้ตบุ๊กทุกยี่ห้อ</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card" id="svcDiag">
+          <div class="service-icon">🔍</div>
+          <h3>ตรวจเช็กอาการ</h3>
+          <p>วินิจฉัยปัญหาเครื่องออนไลน์และหน้างาน ฟรี! ไม่มีค่าใช้จ่าย</p>
+          <span class="service-tag free">ฟรี</span>
+        </div>
+        <div class="service-card" id="svcSSD">
+          <div class="service-icon">💾</div>
+          <h3>เปลี่ยน SSD</h3>
+          <p>อัปเกรดจาก HDD เป็น SSD ให้เครื่องเร็วขึ้นหลายเท่า พร้อมย้ายข้อมูล</p>
+          <span class="service-tag">อัปเกรด</span>
+        </div>
+        <div class="service-card" id="svcWin">
+          <div class="service-icon">🪟</div>
+          <h3>ลง Windows</h3>
+          <p>ติดตั้ง Windows ใหม่ ลง Driver ครบ พร้อมโปรแกรมพื้นฐาน</p>
+          <span class="service-tag">ซอฟต์แวร์</span>
+        </div>
+        <div class="service-card" id="svcClean">
+          <div class="service-icon">✨</div>
+          <h3>ทำความสะอาด</h3>
+          <p>ล้างฝุ่น เปลี่ยนซิลิโคน ทำให้เครื่องเย็นลง ยืดอายุการใช้งาน</p>
+          <span class="service-tag">บำรุงรักษา</span>
+        </div>
+        <div class="service-card" id="svcProg">
+          <div class="service-icon">📦</div>
+          <h3>ติดตั้งโปรแกรม</h3>
+          <p>ติดตั้งโปรแกรมเพิ่มเติมตามต้องการ มีค่าใช้จ่ายตามโปรแกรม</p>
+          <span class="service-tag paid">มีค่าใช้จ่าย</span>
+        </div>
+        <div class="service-card highlight-card" id="svcHome">
+          <div class="service-icon">🏠</div>
+          <h3>บริการถึงบ้าน</h3>
+          <p>รับ-ส่ง ถึงหน้าบ้าน ในเขต <strong>ต.ผาอินทร์แปลง</strong> สะดวก ไม่ต้องเดินทาง</p>
+          <span class="service-tag home">พิเศษ</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">ราคา</span>
+        <h2 class="section-title">โปร่งใส ไม่มีค่าใช้จ่ายซ่อน</h2>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card" id="priceCheck">
+          <div class="price-icon">🔍</div>
+          <h3>ตรวจเช็กเบื้องต้น</h3>
+          <div class="price-amount free-price">ฟรี!</div>
+          <ul class="price-list">
+            <li>✅ เช็กอาการออนไลน์</li>
+            <li>✅ วินิจฉัยเบื้องต้น</li>
+            <li>✅ แนะนำการแก้ปัญหา</li>
+          </ul>
+        </div>
+        <div class="price-card featured" id="priceRepair">
+          <div class="featured-badge">ยอดนิยม</div>
+          <div class="price-icon">🔧</div>
+          <h3>ซ่อมทั่วไป</h3>
+          <div class="price-amount">เริ่มต้น <span>150฿</span></div>
+          <p class="price-note">*ไม่รวมค่าอะไหล่/อุปกรณ์เพิ่มเติม</p>
+          <ul class="price-list">
+            <li>✅ ซ่อมซอฟต์แวร์</li>
+            <li>✅ ลง Windows</li>
+            <li>✅ ทำความสะอาด</li>
+            <li>✅ ตรวจเช็กฟรีก่อนซ่อม</li>
+          </ul>
+          <a href="tel:096-967-9951" class="btn btn-primary" id="priceCallBtn">สอบถามราคา</a>
+        </div>
+        <div class="price-card" id="priceUpgrade">
+          <div class="price-icon">💾</div>
+          <h3>อัปเกรด SSD</h3>
+          <div class="price-amount">ราคาตามจริง</div>
+          <ul class="price-list">
+            <li>✅ เปลี่ยน SSD/HDD</li>
+            <li>✅ ย้ายข้อมูล</li>
+            <li>✅ ติดตั้ง OS ใหม่</li>
+            <li>✅ รับประกันงาน</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREA -->
+  <section class="area" id="area">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">พื้นที่บริการ</span>
+        <h2 class="section-title">บริการถึงหน้าบ้าน</h2>
+        <p class="section-desc">ครอบคลุมพื้นที่ ต.ผาอินทร์แปลง และพื้นที่ใกล้เคียง</p>
+      </div>
+      <div class="area-card">
+        <div class="area-icon">📍</div>
+        <div class="area-info">
+          <h3>ตำบลผาอินทร์แปลง</h3>
+          <p>รับ-ส่งโน้ตบุ๊กถึงหน้าบ้าน ไม่ต้องเดินทางมาเอง<br/>
+          สะดวก รวดเร็ว ปลอดภัย</p>
+        </div>
+      </div>
+      <div class="area-features">
+        <div class="area-feature">
+          <span>🚗</span>
+          <p>รับ-ส่งถึงบ้าน</p>
+        </div>
+        <div class="area-feature">
+          <span>💬</span>
+          <p>สอบถามออนไลน์ได้</p>
+        </div>
+        <div class="area-feature">
+          <span>🔔</span>
+          <p>แจ้งผลทุกขั้นตอน</p>
+        </div>
+        <div class="area-feature">
+          <span>🛡️</span>
+          <p>รับประกันงาน</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">ติดต่อ</span>
+        <h2 class="section-title">มาคุยกันเลย!</h2>
+        <p class="section-desc">สอบถามฟรี ไม่มีค่าใช้จ่าย พร้อมบริการทุกวัน</p>
+      </div>
+      <div class="contact-grid">
+        <a href="tel:096-967-9951" class="contact-card phone-card" id="contactPhone">
+          <div class="contact-icon">📞</div>
+          <h3>โทรศัพท์</h3>
+          <p class="contact-value">096-967-9951</p>
+          <span class="contact-cta">กดโทรเลย →</span>
+        </a>
+        <a href="https://line.me/ti/p/akvTgD3HBe" target="_blank" rel="noopener" class="contact-card line-card" id="contactLine">
+          <div class="line-badge">LINE</div>
+          <div class="contact-icon line-icon">💬</div>
+          <h3>แอด LINE สอบถาม</h3>
+          <p>สอบถาม/เช็กอาการออนไลน์ <strong>ฟรี!</strong></p>
+          <div class="qr-real">
+            <img
+              src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://line.me/ti/p/akvTgD3HBe&ecc=M&margin=8"
+              alt="QR Code แอด LINE ซ่อมมั้ย"
+              id="lineQR"
+            />
+          </div>
+          <span class="line-add-btn">➕ แอด LINE เลย</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOATING CALL BUTTON -->
+  <a href="tel:096-967-9951" class="float-call" id="floatCall" aria-label="โทรหาเรา">
+    <span class="float-icon">📞</span>
+    <span class="float-text">โทรเลย!</span>
+  </a>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-logo">🔧 ซ่อมมั้ย</div>
+      <p>รับซ่อมโน้ตบุ๊ก • เช็กอาการ • อัปเกรดเครื่อง</p>
+      <p class="footer-phone">📞 096-967-9951</p>
+      <p class="footer-copy">© 2025 ซ่อมมั้ย · บริการถึงหน้าบ้าน ต.ผาอินทร์แปลง</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
