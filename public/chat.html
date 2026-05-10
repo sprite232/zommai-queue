@@ -81,7 +81,27 @@
     <div class="wl-timeline" id="workLogTimeline"></div>
   </div>
 
+  <!-- Review Card (shows when done) -->
+  <div class="review-section" id="reviewSection" style="display:none">
+    <div class="review-section-inner" id="reviewInner">
+      <div class="review-title">🎉 งานเสร็จแล้ว! ให้คะแนนบริการหน่อยนะ</div>
+      <div class="stars-picker" id="starsPicker">
+        <span class="star-pick" data-v="1" onclick="pickStar(1)">☆</span>
+        <span class="star-pick" data-v="2" onclick="pickStar(2)">☆</span>
+        <span class="star-pick" data-v="3" onclick="pickStar(3)">☆</span>
+        <span class="star-pick" data-v="4" onclick="pickStar(4)">☆</span>
+        <span class="star-pick" data-v="5" onclick="pickStar(5)">☆</span>
+      </div>
+      <textarea class="review-textarea" id="reviewComment" maxlength="500" placeholder="ความคิดเห็นเพิ่มเติม (ไม่บังคับ)..."></textarea>
+      <button class="review-submit-btn" id="reviewSubmitBtn" onclick="submitReview()">ส่งรีวิว →</button>
+    </div>
+    <div class="review-done-msg" id="reviewDoneMsg" style="display:none">
+      <span style="font-size:1.5rem">⭐</span> ขอบคุณสำหรับรีวิว!
+    </div>
+  </div>
+
   <!-- Messages -->
+
   <div class="chat-messages" id="chatMessages">
     <div class="empty-chat" id="emptyChat">
       <div class="icon">💬</div>

@@ -129,6 +129,9 @@ async function enterChat(queue) {
   // Load work logs
   renderWorkLogs(queue.workLogs || []);
 
+  // Review section
+  updateReviewSection(queue);
+
   // Load messages
   const msgs = await fetch(`/api/messages/${queue.id}`).then(r => r.json());
   msgs.forEach(m => renderMsg(m));
@@ -223,7 +226,7 @@ socket.on('new_message', msg => {
 socket.on('queue_updated', queue => {
   if (queue.id !== currentQueueId) return;
   updateStatusBadge(queue.status);
-  // Show celebratory message when done
+  updateReviewSection(queue);
   if (queue.status === 'done') {
     renderSystemMsg('✅ การซ่อมเสร็จสิ้นแล้ว! ขอบคุณที่ใช้บริการซ่อมมั้ย 🎉');
   }
@@ -388,3 +391,47 @@ function openLightbox(src) {
   document.getElementById('lightbox').classList.add('open');
 }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ── Review ────────────────────────────────────────────────────────────────────
+let selectedStar = 0;
+
+function updateReviewSection(queue) {
+  const sec = document.getElementById('reviewSection');
+  if (!sec) return;
+  if (queue.status === 'done') {
+    sec.style.display = 'block';
+    if (queue.review?.stars) {
+      // already reviewed
+      document.getElementById('reviewInner').style.display = 'none';
+      document.getElementById('reviewDoneMsg').style.display = 'flex';
+    }
+  } else {
+    sec.style.display = 'none';
+  }
+}
+
+function pickStar(n) {
+  selectedStar = n;
+  document.querySelectorAll('.star-pick').forEach((el, i) => {
+    el.textContent = i < n ? '⭐' : '☆';
+    el.classList.toggle('active', i < n);
+  });
+}
+
+async function submitReview() {
+  if (!selectedStar) { alert('กรุณาเลือกคะแนนดาวก่อน'); return; }
+  const comment = document.getElementById('reviewComment').value.trim();
+  const btn = document.getElementById('reviewSubmitBtn');
+  btn.disabled = true; btn.textContent = '⏳ กำลังส่ง...';
+  try {
+    const res = await fetch(`/api/queue/${currentQueueId}/review`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stars: selectedStar, comment })
+    });
+    const data = await res.json();
+    if (!res.ok) { alert(data.error || 'ส่งรีวิวไม่สำเร็จ'); btn.disabled = false; btn.textContent = 'ส่งรีวิว →'; return; }
+    document.getElementById('reviewInner').style.display = 'none';
+    document.getElementById('reviewDoneMsg').style.display = 'flex';
+  } catch { alert('เชื่อมต่อ server ไม่ได้'); btn.disabled = false; btn.textContent = 'ส่งรีวิว →'; }
+}
+

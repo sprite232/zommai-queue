@@ -1,5 +1,7 @@
 // Fix for ISPs that don't support DNS SRV records (needed for mongodb+srv://)
-const dns = require('dns');
+const dns   = require('dns');
+const https = require('https');
+const qs    = require('querystring');
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 require('dotenv').config();
@@ -97,7 +99,13 @@ const queueSchema = new mongoose.Schema({
     text:      { type: String, required: true, maxlength: 1000 },
     author:    { type: String, default: 'ช่างซ่อมมั้ย', maxlength: 100 },
     timestamp: { type: Date, default: Date.now }
-  }]
+  }],
+  price:  { type: Number, default: null, min: 0 },
+  review: {
+    stars:     { type: Number, min: 1, max: 5, default: null },
+    comment:   { type: String, default: '', maxlength: 500, trim: true },
+    createdAt: { type: Date }
+  }
 }, { timestamps: true });
 
 const messageSchema = new mongoose.Schema({
@@ -120,6 +128,20 @@ async function nextQueueNumber() {
     'queueNumber', { $inc: { seq: 1 } }, { new: true, upsert: true }
   );
   return doc.seq;
+}
+
+// ── LINE Notify ──────────────────────────────────────────────────────────────
+function sendLineNotify(message) {
+  const token = process.env.LINE_NOTIFY_TOKEN;
+  if (!token || token === 'your_token_here') return;
+  const body = qs.stringify({ message });
+  const opts = {
+    hostname: 'notify-api.line.me', path: '/api/notify', method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(body) }
+  };
+  const req = https.request(opts, r => { if (r.statusCode !== 200) console.warn('[LINE] status', r.statusCode); });
+  req.on('error', e => console.warn('[LINE] error', e.message));
+  req.write(body); req.end();
 }
 
 // ── Input Sanitization Helpers ────────────────────────────────────────────────
@@ -227,6 +249,8 @@ app.post('/api/queue', queueCreateLimiter, async (req, res) => {
     const queue = await Queue.create({ queueNumber, name, phone, problemType, date, description });
 
     io.to('admin_room').emit('new_queue', queueToJSON(queue));
+    // LINE Notify
+    sendLineNotify(`\n🔔 คิวใหม่! #${queueNumber}\n👤 ${name}\n📞 ${phone}\n🔧 ${problemType}${description ? '\n📝 ' + description.slice(0, 80) : ''}`);
     res.json({ success: true, queue: queueToJSON(queue) });
   } catch (err) {
     console.error('[queue create]', err.message);
@@ -328,12 +352,94 @@ app.get('/api/messages/:queueId', async (req, res) => {
     if (!mongoose.isValidObjectId(req.params.queueId)) return res.json([]);
     const msgs = await Message.find({ queueId: req.params.queueId })
       .sort({ createdAt: 1 })
-      .limit(500); // max 500 messages per queue
+      .limit(500);
     res.json(msgs.map(msgToJSON));
   } catch {
     res.json([]);
   }
 });
+
+// Admin Statistics
+app.get('/api/stats', async (req, res) => {
+  try {
+    const now = new Date();
+    const tod = new Date(now); tod.setHours(0,0,0,0);
+    const wk  = new Date(now); wk.setDate(now.getDate() - 6); wk.setHours(0,0,0,0);
+    const mo  = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [all, todayQ, weekQ, monthQ] = await Promise.all([
+      Queue.find(),
+      Queue.find({ createdAt: { $gte: tod } }),
+      Queue.find({ createdAt: { $gte: wk } }),
+      Queue.find({ createdAt: { $gte: mo } })
+    ]);
+
+    const sumPrice = arr => arr.reduce((s, q) => s + (q.price || 0), 0);
+    const doneOnly = arr => arr.filter(q => q.status === 'done');
+    const reviews  = all.filter(q => q.review?.stars);
+    const avgStars = reviews.length
+      ? (reviews.reduce((s,q) => s + q.review.stars, 0) / reviews.length).toFixed(1)
+      : null;
+
+    res.json({
+      today:   { count: todayQ.length,  revenue: sumPrice(doneOnly(todayQ)) },
+      week:    { count: weekQ.length,   revenue: sumPrice(doneOnly(weekQ)) },
+      month:   { count: monthQ.length,  revenue: sumPrice(doneOnly(monthQ)) },
+      total:   { count: all.length,     revenue: sumPrice(doneOnly(all)) },
+      status:  {
+        waiting:     all.filter(q => q.status==='waiting').length,
+        in_progress: all.filter(q => q.status==='in_progress').length,
+        done:        all.filter(q => q.status==='done').length,
+        cancelled:   all.filter(q => q.status==='cancelled').length
+      },
+      reviews: {
+        count: reviews.length, avg: avgStars,
+        latest: reviews.slice(-5).reverse().map(q => ({
+          queueNumber: q.queueNumber, name: q.name,
+          stars: q.review.stars, comment: q.review.comment, createdAt: q.review.createdAt
+        }))
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'เกิดข้อผิดพลาด' });
+  }
+});
+
+// Set price (admin)
+app.patch('/api/queue/:id/price', async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ error: 'ID ไม่ถูกต้อง' });
+    const price = parseFloat(req.body.price);
+    if (isNaN(price) || price < 0 || price > 999999) return res.status(400).json({ error: 'ราคาไม่ถูกต้อง' });
+    const queue = await Queue.findByIdAndUpdate(req.params.id, { price }, { new: true });
+    if (!queue) return res.status(404).json({ error: 'ไม่พบคิว' });
+    const q = queueToJSON(queue);
+    io.to('admin_room').emit('queue_updated', q);
+    res.json({ success: true, price: queue.price });
+  } catch { res.status(500).json({ error: 'เกิดข้อผิดพลาด' }); }
+});
+
+// Submit review (customer — only if done, only once)
+app.post('/api/queue/:id/review', async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ error: 'ID ไม่ถูกต้อง' });
+    const queue = await Queue.findById(req.params.id);
+    if (!queue) return res.status(404).json({ error: 'ไม่พบคิว' });
+    if (queue.status !== 'done') return res.status(400).json({ error: 'รีวิวได้เฉพาะงานที่เสร็จแล้วเท่านั้น' });
+    if (queue.review?.stars) return res.status(400).json({ error: 'รีวิวไปแล้ว' });
+    const stars   = parseInt(req.body.stars);
+    const comment = stripHtml(req.body.comment || '').slice(0, 500);
+    if (!stars || stars < 1 || stars > 5) return res.status(400).json({ error: 'กรุณาให้คะแนน 1-5 ดาว' });
+    queue.review = { stars, comment, createdAt: new Date() };
+    await queue.save();
+    io.to('admin_room').emit('new_review', {
+      queueId: req.params.id, queueNumber: queue.queueNumber,
+      name: queue.name, stars, comment
+    });
+    res.json({ success: true });
+  } catch { res.status(500).json({ error: 'เกิดข้อผิดพลาด' }); }
+});
+
 
 // Add work log
 app.post('/api/queue/:id/log', async (req, res) => {
@@ -393,6 +499,8 @@ function queueToJSON(q) {
     status:      q.status,
     images:      q.images || [],
     workLogs:    (q.workLogs || []).map(l => ({ text: l.text, author: l.author, timestamp: l.timestamp })),
+    price:       q.price ?? null,
+    review:      q.review?.stars ? { stars: q.review.stars, comment: q.review.comment, createdAt: q.review.createdAt } : null,
     createdAt:   q.createdAt,
     updatedAt:   q.updatedAt
   };

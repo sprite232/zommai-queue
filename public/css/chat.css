@@ -205,11 +205,39 @@ body {
 .wl-text { font-size: .84rem; color: #0f172a; line-height: 1.5; font-weight: 500; }
 .wl-time { font-size: .71rem; color: #94a3b8; margin-top: 2px; }
 
-/* System messages in chat */
-.msg.system-msg { align-self: center; max-width: 90%; }
-.system-bubble {
-  padding: 7px 16px; border-radius: 99px; font-size: .78rem;
-  background: #f1f5f9; color: #475569; text-align: center;
-  border: 1px solid #e2e8f0; font-weight: 500;
+/* ── Review Section (Customer) ───────────────────────────────────────────── */
+.review-section {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border-bottom: 1px solid #fde68a; flex-shrink: 0;
+  padding: 16px 20px;
 }
+.review-section-inner { display: flex; flex-direction: column; gap: 10px; }
+.review-title { font-size: .88rem; font-weight: 700; color: #92400e; text-align: center; }
+.stars-picker { display: flex; justify-content: center; gap: 8px; }
+.star-pick {
+  font-size: 2rem; cursor: pointer; transition: transform .15s, color .15s;
+  color: #d4af37; user-select: none;
+}
+.star-pick:hover, .star-pick.active { transform: scale(1.2); color: #f59e0b; }
+.review-textarea {
+  width: 100%; padding: 10px 12px; border: 1.5px solid #fde68a;
+  border-radius: 10px; font-size: .88rem; font-family: inherit; resize: none;
+  background: rgba(255,255,255,.8); outline: none; transition: border-color .2s;
+  max-height: 80px; min-height: 48px;
+}
+.review-textarea:focus { border-color: #f59e0b; }
+.review-submit-btn {
+  padding: 10px; border-radius: 10px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff; font-weight: 700; font-size: .9rem; border: none;
+  cursor: pointer; font-family: inherit; transition: all .2s;
+}
+.review-submit-btn:hover { transform: translateY(-1px); }
+.review-submit-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.review-done-msg {
+  text-align: center; font-size: .95rem; font-weight: 700;
+  color: #92400e; padding: 8px; display: flex; align-items: center;
+  justify-content: center; gap: 8px;
+}
+
 

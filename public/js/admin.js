@@ -86,6 +86,17 @@ function filterQueues(status, btn) {
   renderQueueList();
 }
 
+// ── View Switching ───────────────────────────────────────────────────────────────────
+function showView(view, navEl) {
+  document.querySelectorAll('.view-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  const panel = document.getElementById('view' + view[0].toUpperCase() + view.slice(1));
+  if (panel) panel.style.display = 'flex';
+  if (navEl) navEl.classList.add('active');
+  if (view === 'stats')   loadStats();
+  if (view === 'reviews') { loadReviews(); newReviewCount = 0; document.getElementById('badgeReview').classList.remove('show'); }
+}
+
 function statusLabel(s) {
   return { waiting: '⏳ รอ', in_progress: '🔧 กำลังซ่อม', done: '✅ เสร็จ', cancelled: '❌ ยกเลิก' }[s] || s;
 }
@@ -138,6 +149,20 @@ async function openQueueDetail(queue) {
   } else {
     imgWrap.style.display = 'none';
   }
+
+  // Price
+  document.getElementById('priceInput').value = queue.price !== null ? queue.price : '';
+  document.getElementById('priceNote').textContent = queue.price !== null
+    ? `บันทึกแล้ว: ฿${queue.price.toLocaleString()}`
+    : 'ยังไม่ได้กรอกราคา';
+
+  // Review
+  const revCard = document.getElementById('reviewCard');
+  if (queue.review?.stars) {
+    revCard.style.display = 'block';
+    document.getElementById('reviewStarsDisplay').innerHTML = '⭐'.repeat(queue.review.stars) + '☆'.repeat(5 - queue.review.stars);
+    document.getElementById('reviewCommentDisplay').textContent = queue.review.comment || 'ไม่มีความคิดเห็นเพิ่มเติม';
+  } else { revCard.style.display = 'none'; }
 
   // ── Tab: Work Log ──────────────────────────────────────
   renderWorkLogs(queue.workLogs || []);
@@ -392,7 +417,110 @@ function openLightbox(src) {
 }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
 
+// ── Price ─────────────────────────────────────────────────────────────────────
+async function savePrice() {
+  if (!activeQueue) return;
+  const val = parseFloat(document.getElementById('priceInput').value);
+  if (isNaN(val) || val < 0) { showToast('กรุณากรอกราคาให้ถูกต้อง', 'warning'); return; }
+  try {
+    const res = await fetch(`/api/queue/${activeQueue.id}/price`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ price: val })
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.error || 'บันทึกไม่สำเร็จ', 'warning'); return; }
+    activeQueue.price = data.price;
+    document.getElementById('priceNote').textContent = `บันทึกแล้ว: ฿${data.price.toLocaleString()}`;
+    showToast(`💰 บันทึกราคา ฿${data.price.toLocaleString()} สำเร็จ`, 'success');
+    const q = allQueues.find(q => q.id === activeQueue.id);
+    if (q) q.price = data.price;
+  } catch { showToast('เชื่อมต่อ server ไม่ได้', 'warning'); }
+}
+
+// ── Statistics ────────────────────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const s = await fetch('/api/stats').then(r => r.json());
+    const fmt = n => n > 0 ? `฿${n.toLocaleString()}` : '฿0';
+
+    document.getElementById('sTodayCount').textContent = s.today.count;
+    document.getElementById('sTodayRev').textContent   = fmt(s.today.revenue);
+    document.getElementById('sWeekCount').textContent  = s.week.count;
+    document.getElementById('sWeekRev').textContent    = fmt(s.week.revenue);
+    document.getElementById('sMonthCount').textContent = s.month.count;
+    document.getElementById('sMonthRev').textContent   = fmt(s.month.revenue);
+    document.getElementById('sTotalCount').textContent = s.total.count;
+    document.getElementById('sTotalRev').textContent   = fmt(s.total.revenue);
+
+    // Status bars
+    const total = s.total.count || 1;
+    const bars  = [
+      { label: '⏳ รอดำเนินการ', count: s.status.waiting,     color: '#f59e0b' },
+      { label: '🔧 กำลังซ่อม',  count: s.status.in_progress, color: '#2563eb' },
+      { label: '✅ เสร็จแล้ว',  count: s.status.done,        color: '#10b981' },
+      { label: '❌ ยกเลิก',      count: s.status.cancelled,   color: '#ef4444' }
+    ];
+    document.getElementById('statusBars').innerHTML = bars.map(b => `
+      <div class="status-bar-row">
+        <div class="status-bar-label">${b.label}</div>
+        <div class="status-bar-track">
+          <div class="status-bar-fill" style="width:${Math.round(b.count/total*100)}%;background:${b.color}"></div>
+        </div>
+        <div class="status-bar-count">${b.count}</div>
+      </div>`).join('');
+
+    // Reviews
+    document.getElementById('statsAvgStars').textContent  = s.reviews.avg ?? '—';
+    document.getElementById('statsReviewCount').textContent = s.reviews.count;
+    document.getElementById('statsStarDisplay').innerHTML = s.reviews.avg
+      ? starsHtml(parseFloat(s.reviews.avg)) : '☆☆☆☆☆';
+  } catch { showToast('โหลดสถิติไม่สำเร็จ', 'warning'); }
+}
+
+// ── Reviews List ──────────────────────────────────────────────────────────────
+async function loadReviews() {
+  const list = document.getElementById('reviewsList');
+  list.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:40px">กำลังโหลด...</div>';
+  try {
+    const s = await fetch('/api/stats').then(r => r.json());
+    const all = await fetch('/api/queues?limit=100').then(r => r.json());
+    const reviewed = all.filter(q => q.review?.stars).sort((a,b) => new Date(b.review.createdAt) - new Date(a.review.createdAt));
+    if (!reviewed.length) {
+      list.innerHTML = '<div class="review-empty"><div class="big">⭐</div>ยังไม่มีรีวิว</div>';
+      return;
+    }
+    list.innerHTML = reviewed.map(q => `
+      <div class="review-card">
+        <div class="review-card-header">
+          <div>
+            <div class="review-card-name">${escHtml(q.name)}</div>
+            <div class="review-card-queue">คิว #${q.queueNumber} · ${q.problemType}</div>
+          </div>
+          <div class="review-card-stars">${starsHtml(q.review.stars)}</div>
+        </div>
+        ${q.review.comment ? `<div class="review-card-comment">"${escHtml(q.review.comment)}"</div>` : ''}
+        <div class="review-card-date">${new Date(q.review.createdAt).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })}</div>
+      </div>`).join('');
+  } catch { list.innerHTML = '<div class="review-empty">โหลดรีวิวไม่สำเร็จ</div>'; }
+}
+
+function starsHtml(n) {
+  const full = Math.round(n);
+  return '⭐'.repeat(full) + '☆'.repeat(Math.max(0, 5 - full));
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function escHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+// ── new_review socket event ───────────────────────────────────────────────────
+socket.on('new_review', (data) => {
+  newReviewCount++;
+  const badge = document.getElementById('badgeReview');
+  badge.textContent = newReviewCount;
+  badge.classList.add('show');
+  showToast(`⭐ รีวิวใหม่จากคิว #${data.queueNumber} — ${starsHtml(data.stars)}`);
+});
+

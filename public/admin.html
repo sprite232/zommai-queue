@@ -17,7 +17,7 @@
     <h1>ซ่อมมั้ย — Admin</h1>
     <p>เข้าสู่ระบบจัดการคิวและแชท</p>
     <div class="login-form">
-      <input class="login-input" id="loginPass" type="password" placeholder="รหัสผ่าน"/>
+      <input class="login-input" id="loginPass" type="password" placeholder="รหัสผ่าน" maxlength="200"/>
       <button class="login-btn" onclick="doLogin()">เข้าสู่ระบบ →</button>
       <div class="login-error" id="loginError">รหัสผ่านไม่ถูกต้อง</div>
     </div>
@@ -33,9 +33,16 @@
       <div><div class="name">ซ่อมมั้ย</div><div class="sub">Admin Dashboard</div></div>
     </div>
     <nav class="sidebar-nav">
-      <div class="sidebar-item active">
+      <div class="sidebar-item active" id="navQueues" onclick="showView('queues',this)">
         <span class="sidebar-icon">📋</span> คิวทั้งหมด
         <span class="sidebar-badge" id="badgeNew">0</span>
+      </div>
+      <div class="sidebar-item" id="navStats" onclick="showView('stats',this)">
+        <span class="sidebar-icon">📊</span> สถิติ &amp; รายได้
+      </div>
+      <div class="sidebar-item" id="navReviews" onclick="showView('reviews',this)">
+        <span class="sidebar-icon">⭐</span> รีวิวลูกค้า
+        <span class="sidebar-badge" id="badgeReview">0</span>
       </div>
       <a href="index.html" class="sidebar-item" target="_blank">
         <span class="sidebar-icon">🌐</span> หน้าเว็บไซต์
@@ -49,115 +56,200 @@
   </aside>
 
   <!-- Main -->
-  <div class="main-area">
-    <!-- Queue Panel -->
-    <div class="queue-panel">
-      <div class="panel-header">
-        <h2>คิวทั้งหมด <span class="queue-count" id="queueCountBadge">0</span></h2>
-        <div class="filter-tabs">
-          <button class="filter-tab active" onclick="filterQueues('all',this)">ทั้งหมด</button>
-          <button class="filter-tab" onclick="filterQueues('waiting',this)">รอ</button>
-          <button class="filter-tab" onclick="filterQueues('in_progress',this)">ซ่อม</button>
-          <button class="filter-tab" onclick="filterQueues('done',this)">เสร็จ</button>
-        </div>
-      </div>
-      <div class="stats-row" id="statsRow">
-        <div class="stat-chip"><span class="dot" style="background:#f59e0b"></span><span class="num" id="statWaiting">0</span> รอ</div>
-        <div class="stat-chip"><span class="dot" style="background:#2563eb"></span><span class="num" id="statProgress">0</span> ดำเนินการ</div>
-        <div class="stat-chip"><span class="dot" style="background:#10b981"></span><span class="num" id="statDone">0</span> เสร็จ</div>
-      </div>
-      <div class="queue-list" id="queueList">
-        <div class="empty-queue"><div class="icon">📋</div>ยังไม่มีคิว</div>
-      </div>
-    </div>
+  <div class="main-area" id="mainArea">
 
-    <!-- Right Panel: Customer Detail + Work Log + Chat -->
-    <div class="chat-area" id="chatArea">
-      <!-- Placeholder -->
-      <div class="chat-placeholder" id="chatPlaceholder">
-        <div class="big-icon">💬</div>
-        <h3>เลือกคิวเพื่อดูข้อมูล</h3>
-        <p style="color:#94a3b8;font-size:.85rem">คลิกที่รายการคิวทางซ้าย</p>
-      </div>
-
-      <!-- Active Detail Wrap -->
-      <div id="activeChatWrap" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
-
-        <!-- Top bar -->
-        <div class="admin-chat-header">
-          <div style="width:40px;height:40px;background:var(--blue-50);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem">👤</div>
-          <div style="flex:1">
-            <div class="admin-chat-name" id="aChatName">—</div>
-            <div class="admin-chat-info" id="aChatInfo">—</div>
+    <!-- ══ VIEW: Queues ══ -->
+    <div id="viewQueues" class="view-panel">
+      <div class="queue-panel">
+        <div class="panel-header">
+          <h2>คิวทั้งหมด <span class="queue-count" id="queueCountBadge">0</span></h2>
+          <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterQueues('all',this)">ทั้งหมด</button>
+            <button class="filter-tab" onclick="filterQueues('waiting',this)">รอ</button>
+            <button class="filter-tab" onclick="filterQueues('in_progress',this)">ซ่อม</button>
+            <button class="filter-tab" onclick="filterQueues('done',this)">เสร็จ</button>
           </div>
-          <select class="status-selector" id="statusSelector" onchange="changeStatus(this.value)">
-            <option value="waiting">⏳ รอดำเนินการ</option>
-            <option value="in_progress">🔧 กำลังดำเนินการ</option>
-            <option value="done">✅ เสร็จเรียบร้อย</option>
-            <option value="cancelled">❌ ยกเลิก</option>
-          </select>
         </div>
-
-        <!-- Tab bar -->
-        <div class="detail-tabs">
-          <button class="detail-tab active" id="tabInfo"    onclick="switchDetailTab('info')">📋 ข้อมูลลูกค้า</button>
-          <button class="detail-tab"        id="tabLog"     onclick="switchDetailTab('log')">🔧 บันทึกการซ่อม</button>
-          <button class="detail-tab"        id="tabChat" onclick="switchDetailTab('chat')">
-            💬 แชท <span class="detail-tab-badge" id="tabChatBadge" style="display:none">●</span>
-          </button>
+        <div class="stats-row">
+          <div class="stat-chip"><span class="dot" style="background:#f59e0b"></span><span class="num" id="statWaiting">0</span> รอ</div>
+          <div class="stat-chip"><span class="dot" style="background:#2563eb"></span><span class="num" id="statProgress">0</span> ดำเนินการ</div>
+          <div class="stat-chip"><span class="dot" style="background:#10b981"></span><span class="num" id="statDone">0</span> เสร็จ</div>
         </div>
+        <div class="queue-list" id="queueList">
+          <div class="empty-queue"><div class="icon">📋</div>ยังไม่มีคิว</div>
+        </div>
+      </div>
 
-        <!-- ── PANEL: Info ── -->
-        <div id="panelInfo" class="detail-panel" style="overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;">
-          <div class="info-card">
-            <div class="info-card-title">👤 ข้อมูลลูกค้า</div>
-            <div class="info-grid">
-              <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-val" id="iName">—</span></div>
-              <div class="info-row"><span class="info-label">เบอร์โทร</span><a class="info-val info-phone" id="iPhone" href="#">—</a></div>
-              <div class="info-row"><span class="info-label">ประเภท</span><span class="info-val" id="iType">—</span></div>
-              <div class="info-row"><span class="info-label">วันที่ต้องการ</span><span class="info-val" id="iDate">—</span></div>
-              <div class="info-row"><span class="info-label">จองเมื่อ</span><span class="info-val" id="iCreated">—</span></div>
-              <div class="info-row full"><span class="info-label">รายละเอียด</span><span class="info-val" id="iDesc" style="white-space:pre-wrap">—</span></div>
+      <!-- Right: Customer Detail -->
+      <div class="chat-area" id="chatArea">
+        <div class="chat-placeholder" id="chatPlaceholder">
+          <div class="big-icon">💬</div>
+          <h3>เลือกคิวเพื่อดูข้อมูล</h3>
+          <p style="color:#94a3b8;font-size:.85rem">คลิกที่รายการคิวทางซ้าย</p>
+        </div>
+        <div id="activeChatWrap" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+          <div class="admin-chat-header">
+            <div style="width:40px;height:40px;background:var(--blue-50);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem">👤</div>
+            <div style="flex:1">
+              <div class="admin-chat-name" id="aChatName">—</div>
+              <div class="admin-chat-info" id="aChatInfo">—</div>
+            </div>
+            <select class="status-selector" id="statusSelector" onchange="changeStatus(this.value)">
+              <option value="waiting">⏳ รอดำเนินการ</option>
+              <option value="in_progress">🔧 กำลังดำเนินการ</option>
+              <option value="done">✅ เสร็จเรียบร้อย</option>
+              <option value="cancelled">❌ ยกเลิก</option>
+            </select>
+          </div>
+          <div class="detail-tabs">
+            <button class="detail-tab active" id="tabInfo"  onclick="switchDetailTab('Info')">📋 ข้อมูลลูกค้า</button>
+            <button class="detail-tab"        id="tabLog"   onclick="switchDetailTab('Log')">🔧 บันทึกการซ่อม</button>
+            <button class="detail-tab"        id="tabChat"  onclick="switchDetailTab('Chat')">
+              💬 แชท <span class="detail-tab-badge" id="tabChatBadge" style="display:none">●</span>
+            </button>
+          </div>
+
+          <!-- Info Panel -->
+          <div id="panelInfo" class="detail-panel" style="overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;">
+            <div class="info-card">
+              <div class="info-card-title">👤 ข้อมูลลูกค้า</div>
+              <div class="info-grid">
+                <div class="info-row"><span class="info-label">ชื่อ</span><span class="info-val" id="iName">—</span></div>
+                <div class="info-row"><span class="info-label">เบอร์โทร</span><a class="info-val info-phone" id="iPhone" href="#">—</a></div>
+                <div class="info-row"><span class="info-label">ประเภท</span><span class="info-val" id="iType">—</span></div>
+                <div class="info-row"><span class="info-label">วันที่ต้องการ</span><span class="info-val" id="iDate">—</span></div>
+                <div class="info-row"><span class="info-label">จองเมื่อ</span><span class="info-val" id="iCreated">—</span></div>
+                <div class="info-row full"><span class="info-label">รายละเอียด</span><span class="info-val" id="iDesc" style="white-space:pre-wrap">—</span></div>
+              </div>
+            </div>
+            <!-- Price Card -->
+            <div class="info-card">
+              <div class="info-card-title">💰 ค่าซ่อม</div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <div style="position:relative;flex:1">
+                  <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#64748b;font-weight:600;font-size:.9rem">฿</span>
+                  <input type="number" id="priceInput" class="price-input" min="0" max="999999" step="50" placeholder="0.00"/>
+                </div>
+                <button class="price-save-btn" onclick="savePrice()">💾 บันทึก</button>
+              </div>
+              <div id="priceNote" style="font-size:.75rem;color:#94a3b8;margin-top:6px"></div>
+            </div>
+            <!-- Review Card (shows if customer reviewed) -->
+            <div class="info-card" id="reviewCard" style="display:none">
+              <div class="info-card-title">⭐ รีวิวจากลูกค้า</div>
+              <div class="review-stars-display" id="reviewStarsDisplay"></div>
+              <div class="review-comment-display" id="reviewCommentDisplay"></div>
+            </div>
+            <!-- Images -->
+            <div class="info-card" id="iImagesWrap" style="display:none">
+              <div class="info-card-title">📷 รูปภาพที่ลูกค้าแนบมา</div>
+              <div class="img-thumbs" id="iImages"></div>
             </div>
           </div>
-          <!-- Attached images -->
-          <div class="info-card" id="iImagesWrap" style="display:none">
-            <div class="info-card-title">📷 รูปภาพที่ลูกค้าแนบมา</div>
-            <div class="img-thumbs" id="iImages"></div>
+
+          <!-- Log Panel -->
+          <div id="panelLog" class="detail-panel" style="display:none;flex-direction:column;">
+            <div class="work-log-list" id="workLogList">
+              <div class="empty-log" id="emptyLog">🔧 ยังไม่มีบันทึก — เพิ่มได้ด้านล่าง</div>
+            </div>
+            <div class="work-log-input-area">
+              <textarea id="logTextarea" class="admin-textarea" rows="2" maxlength="1000" placeholder="บันทึกการซ่อม เช่น: เปลี่ยน RAM สำเร็จ..." oninput="adminResize(this)" onkeydown="logEnter(event)"></textarea>
+              <button class="admin-send-btn" onclick="addWorkLog()">➤</button>
+            </div>
+          </div>
+
+          <!-- Chat Panel -->
+          <div id="panelChat" class="detail-panel" style="display:none;flex-direction:column;">
+            <div class="admin-messages" id="adminMessages"></div>
+            <div class="admin-img-preview" id="adminImgPreview">
+              <img id="adminImgThumb" src="" alt=""/>
+              <span id="adminImgName" style="font-size:.83rem;color:#64748b;flex:1"></span>
+              <button onclick="clearAdminImg()">✕</button>
+            </div>
+            <div class="admin-input-area">
+              <button class="admin-img-btn" onclick="document.getElementById('adminImgFile').click()">📷</button>
+              <input type="file" id="adminImgFile" accept="image/*" style="display:none" onchange="adminPreviewImg(this)"/>
+              <textarea class="admin-textarea" id="adminTextarea" rows="1" maxlength="2000" placeholder="พิมพ์ข้อความตอบกลับ..." oninput="adminResize(this)" onkeydown="adminEnter(event)"></textarea>
+              <button class="admin-send-btn" onclick="adminSend()">➤</button>
+            </div>
           </div>
         </div>
-
-        <!-- ── PANEL: Work Log ── -->
-        <div id="panelLog" class="detail-panel" style="display:none;flex-direction:column;">
-          <div class="work-log-list" id="workLogList">
-            <div class="empty-log" id="emptyLog">🔧 ยังไม่มีบันทึก — เพิ่มได้ด้านล่าง</div>
-          </div>
-          <div class="work-log-input-area">
-            <textarea id="logTextarea" class="admin-textarea" rows="2" placeholder="บันทึกการซ่อม เช่น: เปลี่ยน RAM สำเร็จ, ทดสอบ Windows ผ่าน..." oninput="adminResize(this)" onkeydown="logEnter(event)"></textarea>
-            <button class="admin-send-btn" onclick="addWorkLog()">➤</button>
-          </div>
-        </div>
-
-        <!-- ── PANEL: Chat ── -->
-        <div id="panelChat" class="detail-panel" style="display:none;flex-direction:column;">
-          <div class="admin-messages" id="adminMessages"></div>
-          <div class="admin-img-preview" id="adminImgPreview">
-            <img id="adminImgThumb" src="" alt=""/>
-            <span id="adminImgName" style="font-size:.83rem;color:#64748b;flex:1"></span>
-            <button onclick="clearAdminImg()">✕</button>
-          </div>
-          <div class="admin-input-area">
-            <button class="admin-img-btn" onclick="document.getElementById('adminImgFile').click()">📷</button>
-            <input type="file" id="adminImgFile" accept="image/*" style="display:none" onchange="adminPreviewImg(this)"/>
-            <textarea class="admin-textarea" id="adminTextarea" rows="1" placeholder="พิมพ์ข้อความตอบกลับ..." oninput="adminResize(this)" onkeydown="adminEnter(event)"></textarea>
-            <button class="admin-send-btn" onclick="adminSend()">➤</button>
-          </div>
-        </div>
-
       </div>
     </div>
-  </div>
-</div>
+
+    <!-- ══ VIEW: Statistics ══ -->
+    <div id="viewStats" class="view-panel" style="display:none;overflow-y:auto;padding:28px;flex-direction:column;gap:24px;background:#f8fafc;">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <h2 style="font-size:1.3rem;font-weight:800;color:#0f172a">📊 สถิติ &amp; รายได้</h2>
+          <p style="color:#64748b;font-size:.85rem;margin-top:2px">อัปเดตทุกครั้งที่เปิดหน้านี้</p>
+        </div>
+        <button onclick="loadStats()" style="padding:8px 18px;border-radius:99px;background:#2563eb;color:#fff;border:none;font-weight:600;cursor:pointer;font-size:.85rem;font-family:inherit">🔄 รีเฟรช</button>
+      </div>
+
+      <!-- Period cards -->
+      <div class="stats-cards-grid">
+        <div class="stats-card">
+          <div class="stats-card-label">วันนี้</div>
+          <div class="stats-card-num" id="sTodayCount">—</div>
+          <div class="stats-card-sub">คิว</div>
+          <div class="stats-card-rev" id="sTodayRev">—</div>
+        </div>
+        <div class="stats-card featured">
+          <div class="stats-card-label">7 วันล่าสุด</div>
+          <div class="stats-card-num" id="sWeekCount">—</div>
+          <div class="stats-card-sub">คิว</div>
+          <div class="stats-card-rev" id="sWeekRev">—</div>
+        </div>
+        <div class="stats-card">
+          <div class="stats-card-label">เดือนนี้</div>
+          <div class="stats-card-num" id="sMonthCount">—</div>
+          <div class="stats-card-sub">คิว</div>
+          <div class="stats-card-rev" id="sMonthRev">—</div>
+        </div>
+        <div class="stats-card">
+          <div class="stats-card-label">รวมทั้งหมด</div>
+          <div class="stats-card-num" id="sTotalCount">—</div>
+          <div class="stats-card-sub">คิว</div>
+          <div class="stats-card-rev" id="sTotalRev">—</div>
+        </div>
+      </div>
+
+      <!-- Status breakdown -->
+      <div class="stats-section-card">
+        <div class="stats-section-title">สถานะคิวทั้งหมด</div>
+        <div class="status-bars" id="statusBars">กำลังโหลด...</div>
+      </div>
+
+      <!-- Reviews summary -->
+      <div class="stats-section-card">
+        <div class="stats-section-title">คะแนนรีวิวเฉลี่ย</div>
+        <div id="statsReviewSummary" style="display:flex;align-items:center;gap:16px;margin-top:8px">
+          <div style="font-size:2.5rem;font-weight:800;color:#f59e0b" id="statsAvgStars">—</div>
+          <div>
+            <div class="star-display" id="statsStarDisplay"></div>
+            <div style="font-size:.8rem;color:#64748b;margin-top:2px">จาก <span id="statsReviewCount">0</span> รีวิว</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: Reviews ══ -->
+    <div id="viewReviews" class="view-panel" style="display:none;overflow-y:auto;padding:28px;flex-direction:column;gap:20px;background:#f8fafc;">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <h2 style="font-size:1.3rem;font-weight:800;color:#0f172a">⭐ รีวิวจากลูกค้า</h2>
+          <p style="color:#64748b;font-size:.85rem;margin-top:2px">ความคิดเห็นหลังซ่อมเสร็จ</p>
+        </div>
+        <button onclick="loadReviews()" style="padding:8px 18px;border-radius:99px;background:#2563eb;color:#fff;border:none;font-weight:600;cursor:pointer;font-size:.85rem;font-family:inherit">🔄 รีเฟรช</button>
+      </div>
+      <div id="reviewsList" style="display:flex;flex-direction:column;gap:14px">
+        <div style="text-align:center;color:#94a3b8;padding:40px">กำลังโหลด...</div>
+      </div>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /app -->
 
 <!-- Toast -->
 <div class="toast-wrap" id="toastWrap"></div>
