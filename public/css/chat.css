@@ -175,3 +175,41 @@ body {
   .msg { max-width: 90%; }
   .msg-bubble { max-width: 260px; }
 }
+
+/* ── Work Log Timeline (Customer) ────────────────────────────────────────── */
+.work-log-section {
+  background: #fff; border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0; max-height: 240px;
+}
+.wl-section-header {
+  padding: 10px 16px; font-size: .82rem; font-weight: 700; color: #1e40af;
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; background: #eff6ff; user-select: none;
+}
+.wl-section-header:hover { background: #dbeafe; }
+.wl-toggle-icon { font-size: .75rem; color: #94a3b8; }
+.wl-timeline {
+  padding: 12px 16px; display: flex; flex-direction: column; gap: 8px;
+  overflow-y: auto; max-height: 190px;
+}
+.wl-timeline::-webkit-scrollbar { width: 3px; }
+.wl-timeline::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+.wl-item { display: flex; gap: 10px; align-items: flex-start; }
+.wl-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg,#2563eb,#1e3a8a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .72rem; flex-shrink: 0;
+}
+.wl-content { flex: 1; }
+.wl-text { font-size: .84rem; color: #0f172a; line-height: 1.5; font-weight: 500; }
+.wl-time { font-size: .71rem; color: #94a3b8; margin-top: 2px; }
+
+/* System messages in chat */
+.msg.system-msg { align-self: center; max-width: 90%; }
+.system-bubble {
+  padding: 7px 16px; border-radius: 99px; font-size: .78rem;
+  background: #f1f5f9; color: #475569; text-align: center;
+  border: 1px solid #e2e8f0; font-weight: 500;
+}
+

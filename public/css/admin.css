@@ -1,4 +1,45 @@
 /* ── Admin Dashboard Styles ───────────────────────────────────────────────── */
+
+/* ── Detail Tabs ───────────────────────────────────────────────────────────── */
+.detail-tabs { display: flex; border-bottom: 1px solid var(--gray-200); background: var(--white); flex-shrink: 0; }
+.detail-tab { flex: 1; padding: 12px 8px; border: none; background: none; font-size: .82rem; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all .15s; border-bottom: 2px solid transparent; font-family: inherit; }
+.detail-tab:hover { color: var(--blue-600); background: var(--blue-50); }
+.detail-tab.active { color: var(--blue-600); border-bottom-color: var(--blue-600); background: var(--white); }
+.detail-tab-badge { color: var(--danger); margin-left: 2px; }
+.detail-panel { flex: 1; overflow: hidden; }
+
+/* ── Info Card ─────────────────────────────────────────────────────────────── */
+.info-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; }
+.info-card-title { font-size: .85rem; font-weight: 700; color: var(--dark); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.info-grid { display: flex; flex-direction: column; gap: 10px; }
+.info-row { display: grid; grid-template-columns: 100px 1fr; gap: 8px; align-items: start; }
+.info-row.full { grid-template-columns: 1fr; }
+.info-label { font-size: .78rem; font-weight: 600; color: var(--gray-500); padding-top: 1px; }
+.info-val { font-size: .88rem; color: var(--dark); line-height: 1.5; }
+.info-phone { color: var(--blue-600); text-decoration: none; font-weight: 600; }
+.info-phone:hover { text-decoration: underline; }
+
+/* ── Image Thumbs ──────────────────────────────────────────────────────────── */
+.img-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.img-thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; border: 2px solid var(--gray-200); cursor: pointer; transition: all .2s; }
+.img-thumb:hover { border-color: var(--blue-500); transform: scale(1.05); }
+
+/* ── Work Log ──────────────────────────────────────────────────────────────── */
+.work-log-list { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+.work-log-list::-webkit-scrollbar { width: 4px; }
+.work-log-list::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 99px; }
+.empty-log { text-align: center; color: var(--gray-400); font-size: .85rem; padding: 24px; }
+.work-log-item { display: flex; gap: 12px; align-items: flex-start; }
+.wl-icon { width: 32px; height: 32px; background: linear-gradient(135deg,var(--blue-600),var(--blue-800)); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .8rem; flex-shrink: 0; margin-top: 2px; }
+.wl-body { flex: 1; background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 12px 14px; }
+.wl-text { font-size: .88rem; color: var(--dark); line-height: 1.5; }
+.wl-meta { font-size: .72rem; color: var(--gray-400); margin-top: 5px; }
+.work-log-input-area { background: var(--white); border-top: 1px solid var(--gray-200); padding: 12px 16px; display: flex; gap: 10px; align-items: flex-end; flex-shrink: 0; }
+
+/* ── Quick status buttons in info tab ────────────────────────────────────── */
+.quick-status { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.qs-btn { padding: 6px 14px; border-radius: 99px; border: 1.5px solid var(--gray-200); font-size: .78rem; font-weight: 600; cursor: pointer; transition: all .15s; background: var(--white); font-family: inherit; }
+.qs-btn:hover { border-color: var(--blue-500); color: var(--blue-600); }
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap');
 
 :root {

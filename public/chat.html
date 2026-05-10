@@ -70,6 +70,15 @@
     <span class="q-status-badge" id="qBarStatus">รอ</span>
   </div>
 
+  <!-- Work Log Timeline (ติดตามความคืบหน้าการซ่อม) -->
+  <div class="work-log-section" id="workLogSection" style="display:none">
+    <div class="wl-section-header" onclick="toggleWorkLog()">
+      <span>🔧 ความคืบหน้าการซ่อม</span>
+      <span class="wl-toggle-icon" id="wlToggleIcon">▲</span>
+    </div>
+    <div class="wl-timeline" id="workLogTimeline"></div>
+  </div>
+
   <!-- Messages -->
   <div class="chat-messages" id="chatMessages">
     <div class="empty-chat" id="emptyChat">

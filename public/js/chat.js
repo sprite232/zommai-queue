@@ -111,6 +111,9 @@ async function enterChat(queue) {
   // Join socket room
   socket.emit('join_queue', queue.id);
 
+  // Load work logs
+  renderWorkLogs(queue.workLogs || []);
+
   // Load messages
   const msgs = await fetch(`/api/messages/${queue.id}`).then(r => r.json());
   msgs.forEach(m => renderMsg(m));
@@ -137,6 +140,54 @@ function updateStatusBadge(status) {
   badge.className = 'q-status-badge ' + cls;
 }
 
+// ── Work Log Timeline ─────────────────────────────────────────────────────────
+function renderWorkLogs(logs) {
+  const container = document.getElementById('workLogTimeline');
+  const section   = document.getElementById('workLogSection');
+  if (!container || !section) return;
+  container.innerHTML = '';
+  if (!logs.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  logs.forEach(log => appendWorkLog(log));
+}
+
+function appendWorkLog(log) {
+  const container = document.getElementById('workLogTimeline');
+  const section   = document.getElementById('workLogSection');
+  if (!container) return;
+  if (section) section.style.display = 'block';
+
+  const item = document.createElement('div');
+  item.className = 'wl-item';
+  item.innerHTML = `
+    <div class="wl-dot">🔧</div>
+    <div class="wl-content">
+      <div class="wl-text">${escHtml(log.text)}</div>
+      <div class="wl-time">${new Date(log.timestamp).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'})}</div>
+    </div>`;
+  container.appendChild(item);
+}
+
+function toggleWorkLog() {
+  const timeline  = document.getElementById('workLogTimeline');
+  const icon      = document.getElementById('wlToggleIcon');
+  const collapsed = timeline.style.display === 'none';
+  timeline.style.display = collapsed ? 'block' : 'none';
+  icon.textContent = collapsed ? '▲' : '▼';
+}
+
+function renderSystemMsg(text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg system-msg';
+  wrap.innerHTML = `<div class="system-bubble">${text}</div>`;
+  document.getElementById('typingIndicator').before(wrap);
+  scrollBottom();
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 // ── Socket Events ─────────────────────────────────────────────────────────────
 socket.on('admin_status', ({ online }) => {
   document.getElementById('adminDot').className = 'status-dot' + (online ? ' online' : '');
@@ -157,7 +208,54 @@ socket.on('new_message', msg => {
 socket.on('queue_updated', queue => {
   if (queue.id !== currentQueueId) return;
   updateStatusBadge(queue.status);
+  // Show celebratory message when done
+  if (queue.status === 'done') {
+    renderSystemMsg('✅ การซ่อมเสร็จสิ้นแล้ว! ขอบคุณที่ใช้บริการซ่อมมั้ย 🎉');
+  }
 });
+
+socket.on('work_log', ({ queueId, log }) => {
+  if (queueId !== currentQueueId) return;
+  appendWorkLog(log);
+  renderSystemMsg(`🔧 ช่างอัปเดต: ${log.text}`);
+  scrollBottom();
+});
+
+// ── Work Log Timeline ─────────────────────────────────────────────────────────
+function renderWorkLogs(logs) {
+  const container = document.getElementById('workLogTimeline');
+  if (!container) return;
+  container.innerHTML = '';
+  if (!logs.length) return;
+  logs.forEach(log => appendWorkLog(log));
+}
+
+function appendWorkLog(log) {
+  const container = document.getElementById('workLogTimeline');
+  if (!container) return;
+
+  const item = document.createElement('div');
+  item.className = 'wl-item';
+  item.innerHTML = `
+    <div class="wl-dot">🔧</div>
+    <div class="wl-content">
+      <div class="wl-text">${escHtml(log.text)}</div>
+      <div class="wl-time">${new Date(log.timestamp).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'})}</div>
+    </div>`;
+  container.appendChild(item);
+}
+
+function renderSystemMsg(text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg system-msg';
+  wrap.innerHTML = `<div class="system-bubble">${text}</div>`;
+  document.getElementById('typingIndicator').before(wrap);
+  scrollBottom();
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 socket.on('typing', data => {
   if (data.queueId !== currentQueueId || data.sender !== 'admin') return;

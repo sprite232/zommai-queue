@@ -32,7 +32,12 @@ const queueSchema = new mongoose.Schema({
   date:         { type: String, default: null },
   description:  { type: String, default: '' },
   status:       { type: String, enum: ['waiting','in_progress','done','cancelled'], default: 'waiting' },
-  images:       [{ type: String }]
+  images:       [{ type: String }],
+  workLogs:     [{
+    text:      { type: String, required: true },
+    author:    { type: String, default: 'ช่างซ่อมมั้ย' },
+    timestamp: { type: Date, default: Date.now }
+  }]
 }, { timestamps: true });
 
 const messageSchema = new mongoose.Schema({
@@ -181,7 +186,28 @@ app.post('/api/admin/login', (req, res) => {
   else res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
 });
 
-// Health check for Railway
+// Add work log entry (admin posts progress update)
+app.post('/api/queue/:id/log', async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ error: 'กรุณาระบุข้อความ' });
+    const queue = await Queue.findByIdAndUpdate(
+      req.params.id,
+      { $push: { workLogs: { text, timestamp: new Date() } } },
+      { new: true }
+    );
+    if (!queue) return res.status(404).json({ error: 'ไม่พบคิว' });
+    const log = queue.workLogs[queue.workLogs.length - 1];
+    const payload = { queueId: req.params.id, log: { text: log.text, author: log.author, timestamp: log.timestamp } };
+    io.to(`queue_${req.params.id}`).emit('work_log', payload);
+    io.to('admin_room').emit('work_log', payload);
+    res.json({ success: true, log: payload.log });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Health check
 app.get('/health', (_req, res) => res.json({ status: 'ok', time: new Date() }));
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -195,7 +221,8 @@ function queueToJSON(q) {
     date:        q.date,
     description: q.description,
     status:      q.status,
-    images:      q.images,
+    images:      q.images || [],
+    workLogs:    (q.workLogs || []).map(l => ({ text: l.text, author: l.author, timestamp: l.timestamp })),
     createdAt:   q.createdAt,
     updatedAt:   q.updatedAt
   };
