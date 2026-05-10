@@ -35,9 +35,11 @@
     <!-- Tab: New Chat -->
     <div id="formNewChat" style="display:none">
       <div class="entry-form">
-        <input class="entry-input" id="inputGuestName" type="text" placeholder="ชื่อของคุณ *"/>
-        <input class="entry-input" id="inputGuestPhone" type="tel" placeholder="เบอร์โทรศัพท์ *"/>
-        <textarea class="entry-input" id="inputGuestMsg" rows="3" placeholder="อธิบายปัญหาเบื้องต้น..." style="resize:none;"></textarea>
+        <input class="entry-input" id="inputGuestName" type="text" placeholder="ชื่อของคุณ *" minlength="2" maxlength="100" autocomplete="name"/>
+        <input class="entry-input" id="inputGuestPhone" type="tel" placeholder="เบอร์โทร * เช่น 081-234-5678"
+          maxlength="15" inputmode="tel" autocomplete="tel" oninput="filterPhone(this)"/>
+        <textarea class="entry-input" id="inputGuestMsg" rows="3" maxlength="2000"
+          placeholder="อธิบายปัญหาเบื้องต้น..." style="resize:none;"></textarea>
         <button class="entry-btn" id="btnNewChat" onclick="startNewChat()">เริ่มแชทเลย →</button>
         <div class="entry-error" id="errNewChat"></div>
       </div>

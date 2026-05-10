@@ -37,22 +37,24 @@ async function enterByQueueId() {
   const numStr = document.getElementById('inputQueueId').value.trim();
   const name   = document.getElementById('inputQueueName').value.trim();
   const errEl  = document.getElementById('errQueueId');
-  errEl.style.display = 'none';
+  hideErr(errEl);
 
-  if (!numStr || !name) { showErr(errEl, 'กรุณากรอก Queue ID และชื่อ'); return; }
+  if (!numStr) { showErr(errEl, 'กรุณากรอก Queue ID'); return; }
+  if (!name || name.length < 2) { showErr(errEl, 'กรุณากรอกชื่อให้ครบ (อย่างน้อย 2 ตัวอักษร)'); return; }
+  if (name.length > 100) { showErr(errEl, 'ชื่อต้องไม่เกิน 100 ตัวอักษร'); return; }
   const num = parseInt(numStr, 10);
+  if (isNaN(num) || num <= 0) { showErr(errEl, 'Queue ID ต้องเป็นตัวเลขที่ถูกต้อง'); return; }
 
   try {
     const queues = await fetch('/api/queues').then(r => r.json());
     const queue = queues.find(q => q.queueNumber === num);
     if (!queue) { showErr(errEl, `ไม่พบคิว #${num} กรุณาตรวจสอบอีกครั้ง`); return; }
-
     myName = name;
     localStorage.setItem('myQueueId', queue.id);
     localStorage.setItem('myQueueName', name);
     enterChat(queue);
-  } catch (e) {
-    showErr(errEl, 'เชื่อมต่อ server ไม่ได้ กรุณาลองใหม่');
+  } catch {
+    showErr(errEl, 'ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่');
   }
 }
 
@@ -61,9 +63,13 @@ async function startNewChat() {
   const phone = document.getElementById('inputGuestPhone').value.trim();
   const msg   = document.getElementById('inputGuestMsg').value.trim();
   const errEl = document.getElementById('errNewChat');
-  errEl.style.display = 'none';
+  hideErr(errEl);
 
-  if (!name || !phone) { showErr(errEl, 'กรุณากรอกชื่อและเบอร์โทร'); return; }
+  if (!name || name.length < 2) { showErr(errEl, 'กรุณากรอกชื่อ (อย่างน้อย 2 ตัวอักษร)'); return; }
+  if (name.length > 100) { showErr(errEl, 'ชื่อต้องไม่เกิน 100 ตัวอักษร'); return; }
+  if (!phone) { showErr(errEl, 'กรุณากรอกเบอร์โทรศัพท์'); return; }
+  if (!validatePhoneClient(phone)) { showErr(errEl, 'เบอร์โทรไม่ถูกต้อง ตัวอย่าง: 081-234-5678'); return; }
+  if (msg.length > 2000) { showErr(errEl, 'ข้อความต้องไม่เกิน 2,000 ตัวอักษร'); return; }
 
   try {
     const res = await fetch('/api/queue', {
@@ -93,7 +99,16 @@ async function startNewChat() {
   }
 }
 
+// ── Validation helpers ────────────────────────────────────────────────────────
+function validatePhoneClient(phone) {
+  const cleaned = phone.replace(/[\s\-]/g, '');
+  return /^(\+66|0)[0-9]{8,10}$/.test(cleaned);
+}
+function filterPhone(el) {
+  el.value = el.value.replace(/[^\d\+\-\s]/g, '').slice(0, 15);
+}
 function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+function hideErr(el) { el.style.display = 'none'; }
 
 // ── Enter Chat ────────────────────────────────────────────────────────────────
 async function enterChat(queue) {

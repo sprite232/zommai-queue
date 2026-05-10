@@ -113,6 +113,12 @@ body {
   border-color: var(--blue-500); box-shadow: 0 0 0 3px rgba(59,130,246,.12);
 }
 .form-textarea { resize: vertical; min-height: 100px; }
+/* Validation states */
+.form-input.input-error, .form-select.input-error, .form-textarea.input-error {
+  border-color: var(--danger); box-shadow: 0 0 0 3px rgba(239,68,68,.1);
+}
+.field-err { font-size: .78rem; color: var(--danger); margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+.field-err::before { content: '⚠'; }
 
 /* ── Navbar ────────────────────────────────── */
 .navbar {

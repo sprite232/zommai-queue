@@ -224,11 +224,15 @@
           <div class="form-grid">
             <div class="form-group">
               <label class="form-label" for="bName">ชื่อ-นามสกุล<span>*</span></label>
-              <input class="form-input" id="bName" type="text" placeholder="คุณสมชาย ใจดี" required/>
+              <input class="form-input" id="bName" type="text" placeholder="คุณสมชาย ใจดี"
+                required minlength="2" maxlength="100" autocomplete="name"/>
             </div>
             <div class="form-group">
               <label class="form-label" for="bPhone">เบอร์โทรศัพท์<span>*</span></label>
-              <input class="form-input" id="bPhone" type="tel" placeholder="08x-xxx-xxxx" required/>
+              <input class="form-input" id="bPhone" type="tel" placeholder="081-234-5678"
+                required maxlength="15" inputmode="tel" autocomplete="tel"
+                oninput="filterPhoneInput(this)"/>
+              <div style="font-size:.72rem;color:#94a3b8;margin-top:3px">ตัวเลข 9-10 หลัก เช่น 081-234-5678</div>
             </div>
             <div class="form-group">
               <label class="form-label" for="bType">ประเภทปัญหา<span>*</span></label>
@@ -249,8 +253,13 @@
               <input class="form-input" id="bDate" type="date"/>
             </div>
             <div class="form-group full">
-              <label class="form-label" for="bDesc">รายละเอียดเพิ่มเติม</label>
-              <textarea class="form-textarea" id="bDesc" placeholder="อธิบายอาการของเครื่อง เช่น เปิดเครื่องติดแต่ช้ามาก ใช้งานมา 3 ปีแล้ว..."></textarea>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                <label class="form-label" for="bDesc" style="margin:0">รายละเอียดเพิ่มเติม</label>
+                <span id="descCounter" style="font-size:.72rem;color:#94a3b8">0 / 2000</span>
+              </div>
+              <textarea class="form-textarea" id="bDesc" maxlength="2000"
+                placeholder="อธิบายอาการของเครื่อง เช่น เปิดเครื่องติดแต่ช้ามาก ใช้งานมา 3 ปีแล้ว..."
+                oninput="updateCounter(this,2000,'descCounter')"></textarea>
             </div>
             <div class="form-group full">
               <label class="form-label">รูปภาพประกอบ (ถ้ามี)</label>
