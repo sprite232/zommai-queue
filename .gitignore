@@ -5,3 +5,4 @@ public/uploads/
 *.log
 .DS_Store
 Thumbs.db
+.env
