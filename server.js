@@ -129,24 +129,23 @@ async function nextQueueNumber() {
   return doc.seq;
 }
 
-// ── Telegram Bot Notify ───────────────────────────────────────────────────────
-function sendTelegramNotify(message) {
-  const token  = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId || token === 'your_bot_token' || chatId === 'your_chat_id') return;
-
-  const body = JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML' });
-  const opts = {
-    hostname: 'api.telegram.org',
-    path:     `/bot${token}/sendMessage`,
-    method:   'POST',
-    headers:  { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
-  };
-  const req = https.request(opts, r => {
-    if (r.statusCode !== 200) console.warn('[Telegram] status', r.statusCode);
-  });
-  req.on('error', e => console.warn('[Telegram] error', e.message));
-  req.write(body); req.end();
+// ── Discord Webhook Notify ────────────────────────────────────────────────────
+function sendDiscordNotify(content) {
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  if (!webhookUrl || webhookUrl === 'your_webhook_url') return;
+  try {
+    const url  = new URL(webhookUrl);
+    const body = JSON.stringify({ content, username: 'ซ่อมมั้ย 🔧' });
+    const opts = {
+      hostname: url.hostname, path: url.pathname + url.search, method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    };
+    const req = https.request(opts, r => {
+      if (r.statusCode !== 204) console.warn('[Discord] status', r.statusCode);
+    });
+    req.on('error', e => console.warn('[Discord] error', e.message));
+    req.write(body); req.end();
+  } catch (e) { console.warn('[Discord] invalid webhook URL'); }
 }
 
 // ── Input Sanitization Helpers ────────────────────────────────────────────────
@@ -254,13 +253,13 @@ app.post('/api/queue', queueCreateLimiter, async (req, res) => {
     const queue = await Queue.create({ queueNumber, name, phone, problemType, date, description });
 
     io.to('admin_room').emit('new_queue', queueToJSON(queue));
-    // Telegram notify
-    sendTelegramNotify(
-      `🔔 <b>คิวใหม่! #${queueNumber}</b>\n` +
+    // Discord notify
+    sendDiscordNotify(
+      `🔔 **คิวใหม่! #${queueNumber}**\n` +
       `👤 ${name}\n` +
       `📞 ${phone}\n` +
       `🔧 ${problemType}` +
-      (description ? `\n📝 ${description.slice(0, 100)}` : '')
+      (description ? `\n📝 ${description.slice(0, 150)}` : '')
     );
     res.json({ success: true, queue: queueToJSON(queue) });
   } catch (err) {
